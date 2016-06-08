@@ -1,0 +1,11 @@
+---
+spring:
+  profiles: default
+
+logging.level.com.example: DEBUG
+
+---
+spring:
+  profiles: cloud
+
+logging.level.com.example: INFO

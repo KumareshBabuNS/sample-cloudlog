@@ -1,0 +1,58 @@
+# Logging levels cloud example
+
+This application shows how logging levels can be changed when an app is deployed to Cloud Foundry.
+
+## Local
+
+----
+$ mvn clean package
+$ java -jar target/sample-cloudlog-0.0.1.BUILD-SNAPSHOT.jar
+----
+
+Note the log output has `INFO` and `DEBUG` messages:
+
+----
+...
+2016-06-07 17:46:05.543 DEBUG 9904 --- [           main] com.example.cloudy.CloudyApplication     : This is a debug message
+2016-06-07 17:46:05.543  INFO 9904 --- [           main] com.example.cloudy.CloudyApplication     : This is an info message
+...
+----
+
+## Cloud
+
+----
+$ mvn clean package
+$ cf push clogging -p target/sample-cloudlog-0.0.1.BUILD-SNAPSHOT.jar
+----
+
+Note that only `INFO` log is now output
+
+----
+$ cf logs --recent clogging
+
+...
+2016-06-07 17:48:07.325  INFO 9904 --- [           main] com.example.cloudy.CloudyApplication     : This is an info message
+...
+----
+
+## Why
+
+The `application.yml` contains the following:
+
+[source,yaml]
+----
+---
+spring:
+  profiles: default
+
+logging.level.com.example: DEBUG
+
+---
+spring:
+  profiles: cloud
+
+logging.level.com.example: INFO
+----
+
+There are two configs here. `cloud` is automatically applied by the buildpack when the app is pushed to Cloud Foundry.
+The `default` profile is applied when no other profiles are active.
